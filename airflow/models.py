@@ -1055,24 +1055,10 @@ class TaskInstance(Base):
                 jinja_context.update(
                     self.task.dag.user_defined_macros)
 
-        rt = self.task.render_template  # shortcut to method
         for attr in task.__class__.template_fields:
             content = getattr(task, attr)
             if content:
-                if isinstance(content, basestring):
-                    result = rt(content, jinja_context)
-                elif isinstance(content, (list, tuple)):
-                    result = [rt(s, jinja_context) for s in content]
-                elif isinstance(content, dict):
-                    result = {
-                        k: rt(v, jinja_context)
-                        for k, v in list(content.items())}
-                else:
-                    param_type = type(content)
-                    msg = (
-                        "Type '{param_type}' used for parameter '{attr}' is "
-                        "not supported for templating").format(**locals())
-                    raise AirflowException(msg)
+                result = self.task.render_template(content, jinja_context)
                 setattr(task, attr, result)
 
     def email_alert(self, exception, is_retry=False):
@@ -1520,17 +1506,28 @@ class BaseOperator(object):
         return result
 
     def render_template(self, content, context):
-        if hasattr(self, 'dag'):
-            env = self.dag.get_template_env()
-        else:
-            env = jinja2.Environment(cache_size=0)
+        if isinstance(content, basestring):
+            if hasattr(self, 'dag'):
+                env = self.dag.get_template_env()
+            else:
+                env = jinja2.Environment(cache_size=0)
 
-        exts = self.__class__.template_ext
-        if any([content.endswith(ext) for ext in exts]):
-            template = env.get_template(content)
-        else:
-            template = env.from_string(content)
-        return template.render(**context)
+            exts = self.__class__.template_ext
+            if any([content.endswith(ext) for ext in exts]):
+                template = env.get_template(content)
+            else:
+                template = env.from_string(content)
+            return template.render(**context)
+        elif isinstance(content, (list, tuple)):
+            return [self.render_template(s, context) for s in content]
+        elif isinstance(content, dict):
+            return {k: self.render_templates(v, context) for k, v in list(content.items())}
+
+        param_type = type(content)
+        msg = (
+            "Type '{param_type}' used for parameter '{attr}' is "
+            "not supported for templating").format(**locals())
+        raise AirflowException(msg)
 
     def prepare_template(self):
         '''
