@@ -65,6 +65,7 @@ setup(
         'setproctitle>=1.1.8, <2',
         'sqlalchemy>=0.9.8, <0.10',
         'thrift>=0.9.2, <0.10',
+        'pyhocon>=0.3.10',
     ],
     extras_require={
         'all': devel + optional,

@@ -38,7 +38,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url = conf.get('core', 'SQL_ALCHEMY_CONN')
+    url = conf.airflow.core.sql_alchemy_conn.as_string
     context.configure(
         url=url, target_metadata=target_metadata, literal_binds=True)
 

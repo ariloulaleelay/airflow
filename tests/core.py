@@ -193,6 +193,7 @@ class CoreTest(unittest.TestCase):
 
     def test_confirm_unittest_mod(self):
         assert configuration.conf.get('core', 'unit_test_mode')
+        assert configuration.conf.airflow.core.unit_test_mode.as_bool
 
     def test_pickling(self):
         dp = self.dag.pickle()

@@ -4,6 +4,7 @@
 .DS_Store
 .ipynb*
 .coverage
+.eggs
 airflow/www/static/coverage/
 airflow.db
 airflow.cfg
@@ -20,4 +21,5 @@ MANIFEST
 secrets.py
 sftp-config.json
 unittests.cfg
+unittests.conf
 error.log

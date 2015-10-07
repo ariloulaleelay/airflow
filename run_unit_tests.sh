@@ -1,5 +1,6 @@
+export AIRFLOW_UNITTESTS=1
 export AIRFLOW_HOME=${AIRFLOW_HOME:=~/airflow}
-export AIRFLOW_CONFIG=$AIRFLOW_HOME/unittests.cfg
+export AIRFLOW_CONFIG=$AIRFLOW_HOME/unittests.conf
 
 # Generate the `airflow` executable if needed
 which airflow > /dev/null || python setup.py develop
