@@ -145,12 +145,20 @@ class ExternalTaskSensor(BaseSensorOperator):
             dttm = context['execution_date']
 
         session = settings.Session()
-        count = session.query(TI).filter(
-            TI.dag_id == self.external_dag_id,
-            TI.task_id == self.external_task_id,
-            TI.state.in_(self.allowed_states),
-            TI.execution_date == dttm,
-        ).count()
+        # TODO don't duplicate code 
+        if external_dag_id == '*':
+            count = session.query(TI).filter(
+                TI.task_id == self.external_task_id,
+                TI.state.in_(self.allowed_states),
+                TI.execution_date == dttm,
+            ).count()
+        else:
+            count = session.query(TI).filter(
+                TI.dag_id == self.external_dag_id,
+                TI.task_id == self.external_task_id,
+                TI.state.in_(self.allowed_states),
+                TI.execution_date == dttm,
+            ).count()
         session.commit()
         session.close()
         return count
