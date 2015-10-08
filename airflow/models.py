@@ -1521,7 +1521,7 @@ class BaseOperator(object):
         elif isinstance(content, (list, tuple)):
             return [self.render_template(s, context) for s in content]
         elif isinstance(content, dict):
-            return {k: self.render_templates(v, context) for k, v in list(content.items())}
+            return {k: self.render_template(v, context) for k, v in list(content.items())}
 
         param_type = type(content)
         msg = (
