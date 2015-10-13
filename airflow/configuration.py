@@ -300,15 +300,15 @@ class ConfigEntry(object):
     def __getattr__(self, key):
         try:
             if key == 'as_string':
-                return str(self._config.get_string(self._key))
+                return self._config.get_string(self._key)
             elif key == 'as_bool':
                 return self._config.get_boolean(self._key)
             elif key == 'as_int':
                 return self._config.get_int(self._key)
             elif key == 'as_config':
-                return str(self._config.get_config(self._key))
+                return self._config.get_config(self._key)
             elif key == 'get':
-                return str(self._config.get(self._key))
+                return self._config.get(self._key)
 
             return ConfigEntry(self._config, self._key + '.' + key)
         except ConfigException, e:
