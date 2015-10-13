@@ -4,6 +4,8 @@ import inspect
 import logging
 import os
 import sys
+import importlib
+from airflow.operators import BaseOperator
 from itertools import chain
 merge = chain.from_iterable
 
@@ -64,6 +66,7 @@ for root, dirs, files in os.walk(plugins_folder, followlinks=True):
             logging.exception(e)
             logging.error('Failed to import plugin ' + filepath)
 
+
 operators = merge([p.operators for p in plugins])
 hooks = merge([p.hooks for p in plugins])
 executors = merge([p.executors for p in plugins])
@@ -71,3 +74,10 @@ macros = merge([p.macros for p in plugins])
 admin_views = merge([p.admin_views for p in plugins])
 flask_blueprints = merge([p.flask_blueprints for p in plugins])
 menu_links = merge([p.menu_links for p in plugins])
+
+for plugin_module_string in conf.airflow.core.plugins():
+    module = importlib.import_module(plugin_module_string)
+    for obj_name, obj in module.__dict__.items():
+        if inspect.isclass(obj):
+            if isinstance(obj, BaseOperator) and obj is not BaseOperator:
+                operators.append(obj)
