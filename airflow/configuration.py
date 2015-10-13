@@ -305,6 +305,8 @@ class ConfigEntry(object):
             return self._config.getboolean(self._key)
         elif key == 'as_int':
             return self._config.getint(self._key)
+        elif key == 'get':
+            return str(self._config.get(self._key))
             
         return ConfigEntry(self._config, self._key + '.' + key)
 
