@@ -298,17 +298,21 @@ class ConfigEntry(object):
         return self._config.get(self._key)
 
     def __getattr__(self, key):
-        # TODO make it niceier
-        if key == 'as_string':
-            return str(self._config.get(self._key))
-        elif key == 'as_bool':
-            return self._config.getboolean(self._key)
-        elif key == 'as_int':
-            return self._config.getint(self._key)
-        elif key == 'get':
-            return str(self._config.get(self._key))
-            
-        return ConfigEntry(self._config, self._key + '.' + key)
+        try:
+            if key == 'as_string':
+                return str(self._config.get_string(self._key))
+            elif key == 'as_bool':
+                return self._config.get_boolean(self._key)
+            elif key == 'as_int':
+                return self._config.get_int(self._key)
+            elif key == 'as_config':
+                return str(self._config.get_config(self._key))
+            elif key == 'get':
+                return str(self._config.get(self._key))
+
+            return ConfigEntry(self._config, self._key + '.' + key)
+        except ConfigException, e:
+            raise AirflowConfigException(str(e))
 
 
 class ConfigParserWithDefaults(object):
@@ -319,7 +323,13 @@ class ConfigParserWithDefaults(object):
         self._config = file_config.with_fallback(default_config)
 
     def __getattr__(self, key):
-        return ConfigEntry(self, key)
+        return ConfigEntry(self._config, key)
+
+    def get_config(self, key):
+        try:
+            return self._config.get_config(key)
+        except ConfigException, e:
+            raise AirflowConfigException(str(e))
 
     def get(self, key, additional_key=None):
         if additional_key is not None:
