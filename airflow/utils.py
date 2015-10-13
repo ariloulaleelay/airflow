@@ -102,10 +102,30 @@ def pessimistic_connection_handling():
             raise exc.DisconnectionError()
         cursor.close()
 
+def initpools():
+    from airflow import models
+    pools = conf.pools.default
+    P = models.Pool
+    session = settings.Session()
+
+    for pool_name, pool_info in pools.items():
+        pool = session.query(P).filter(P.pool == pool_name).first()
+        if not pool:
+            session.add(
+                models.Pool(
+                    pool=pool_name,
+                    slots=pool_info.get_int('slots'),
+                    description=pool_info.get_string('description', '')
+                )
+            )
+            session.commit
+
 
 def initdb():
     from airflow import models
     upgradedb()
+
+    initpools()
 
     # Creating the local_mysql DB connection
     C = models.Connection

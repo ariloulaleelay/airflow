@@ -86,6 +86,17 @@ airflow {
         unit_test_mode = False
 
         security = None
+
+        plugins = []
+    }
+
+    pools {
+        default {
+            sample_pool {
+                slots = 1
+                description = "Sample pool"
+            }
+        }
     }
 
     webserver {
