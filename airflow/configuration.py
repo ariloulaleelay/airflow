@@ -297,6 +297,14 @@ class ConfigEntry(object):
     def __str__(self):
         return self._config.get(self._key)
 
+    def __call__(self, key=None):
+        try:
+            if key is None:
+                return self._config.get(self._key)
+            return ConfigEntry(self._config, self._key + '.' + key)
+        except ConfigException, e:
+            raise AirflowConfigException(str(e))
+
     def __getattr__(self, key):
         try:
             if key == 'as_string':
@@ -307,8 +315,6 @@ class ConfigEntry(object):
                 return self._config.get_int(self._key)
             elif key == 'as_config':
                 return self._config.get_config(self._key)
-            elif key == 'get':
-                return self._config.get(self._key)
 
             return ConfigEntry(self._config, self._key + '.' + key)
         except ConfigException, e:

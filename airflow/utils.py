@@ -103,11 +103,13 @@ def pessimistic_connection_handling():
         cursor.close()
 
 def initpools():
+    logging.info("Creating pools")
+
     from airflow import models
     P = models.Pool
     session = settings.Session()
 
-    for pool_name, pool_info in conf.airflow.pools.default.as_config.items():
+    for pool_name, pool_info in conf.airflow.pools.default().items():
         pool = session.query(P).filter(P.pool == pool_name).first()
         if not pool:
             session.add(
@@ -123,7 +125,6 @@ def initpools():
 def initdb():
     from airflow import models
     upgradedb()
-
     initpools()
 
     # Creating the local_mysql DB connection
