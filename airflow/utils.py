@@ -104,7 +104,7 @@ def pessimistic_connection_handling():
 
 def initpools():
     from airflow import models
-    pools = conf.pools.default
+    pools = conf.pools.default.get
     P = models.Pool
     session = settings.Session()
 
