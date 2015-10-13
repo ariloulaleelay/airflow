@@ -67,7 +67,7 @@ for root, dirs, files in os.walk(plugins_folder, followlinks=True):
             logging.error('Failed to import plugin ' + filepath)
 
 
-operators = merge([p.operators for p in plugins])
+operators = list(merge([p.operators for p in plugins]))
 hooks = merge([p.hooks for p in plugins])
 executors = merge([p.executors for p in plugins])
 macros = merge([p.macros for p in plugins])
@@ -79,5 +79,5 @@ for plugin_module_string in conf.airflow.core.plugins():
     module = importlib.import_module(plugin_module_string)
     for obj_name, obj in module.__dict__.items():
         if inspect.isclass(obj):
-            if isinstance(obj, BaseOperator) and obj is not BaseOperator:
+            if issubclass(obj, BaseOperator):
                 operators.append(obj)
