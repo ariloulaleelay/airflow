@@ -6,6 +6,8 @@ import os
 import sys
 import importlib
 from airflow.operators import BaseOperator
+from airflow.hooks import BaseHook
+from airflow.executors import BaseExecutor
 from itertools import chain
 merge = chain.from_iterable
 
@@ -68,12 +70,12 @@ for root, dirs, files in os.walk(plugins_folder, followlinks=True):
 
 
 operators = list(merge([p.operators for p in plugins]))
-hooks = merge([p.hooks for p in plugins])
-executors = merge([p.executors for p in plugins])
-macros = merge([p.macros for p in plugins])
-admin_views = merge([p.admin_views for p in plugins])
-flask_blueprints = merge([p.flask_blueprints for p in plugins])
-menu_links = merge([p.menu_links for p in plugins])
+hooks = list(merge([p.hooks for p in plugins]))
+executors = list(merge([p.executors for p in plugins]))
+macros = list(merge([p.macros for p in plugins]))
+admin_views = list(merge([p.admin_views for p in plugins]))
+flask_blueprints = list(merge([p.flask_blueprints for p in plugins]))
+menu_links = list(merge([p.menu_links for p in plugins]))
 
 for plugin_module_string in conf.airflow.core.plugins():
     module = importlib.import_module(plugin_module_string)
@@ -81,3 +83,7 @@ for plugin_module_string in conf.airflow.core.plugins():
         if inspect.isclass(obj):
             if issubclass(obj, BaseOperator):
                 operators.append(obj)
+            elif issubclass(obj, BaseHook):
+                hooks.append(obj)
+            elif issubclass(obj, BaseExecutor):
+                executors.append(obj)
