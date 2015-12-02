@@ -293,7 +293,7 @@ class ConfigEntry(object):
     def __init__(self, config, key):
         self._config = config
         self._key = key
-    
+
     def __str__(self):
         return self._config.get(self._key)
 
@@ -301,7 +301,7 @@ class ConfigEntry(object):
         try:
             if key is None:
                 return self._config.get(self._key)
-            return ConfigEntry(self._config, self._key + '.' + key)
+            return ConfigEntry(self._config, self._key + '.' + str(key))
         except ConfigException, e:
             raise AirflowConfigException(str(e))
 
