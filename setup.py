@@ -4,8 +4,11 @@ from setuptools.command.test import test as TestCommand
 import os
 import sys
 
-# Kept manually in sync with airflow.__version__
-version = '1.6.2'
+
+def get_version():
+    import imp
+    m = imp.load_source('airflow.version', 'airflow/version.py')
+    return m.__version__
 
 
 class Tox(TestCommand):
@@ -88,7 +91,7 @@ devel = all_dbs + doc + samba + s3 + ['nose'] + slack + crypto + oracle
 setup(
     name='airflow',
     description='Programmatically author, schedule and monitor data pipelines',
-    version=version,
+    version=get_version(),
     packages=find_packages(),
     package_data={'': ['airflow/alembic.ini']},
     include_package_data=True,
@@ -149,7 +152,7 @@ setup(
     author_email='maximebeauchemin@gmail.com',
     url='https://github.com/airbnb/airflow',
     download_url=(
-        'https://github.com/airbnb/airflow/tarball/' + version),
+        'https://github.com/airbnb/airflow/tarball/' + get_version()),
     cmdclass={'test': Tox,
               'extra_clean': CleanCommand,
               },

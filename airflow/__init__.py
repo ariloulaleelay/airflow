@@ -5,7 +5,7 @@ in their PYTHONPATH. airflow_login should be based off the
 `airflow.www.login`
 """
 from builtins import object
-__version__ = "1.6.2"
+from .version import __version__
 
 import logging
 import os
