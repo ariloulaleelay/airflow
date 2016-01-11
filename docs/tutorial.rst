@@ -48,6 +48,7 @@ complicated, a line by line explanation follows below.
     t2 = BashOperator(
         task_id='sleep',
         bash_command='sleep 5',
+        retries=3,
         dag=dag)
 
     templated_command = """
@@ -164,13 +165,14 @@ instantiated from an operator is called a constructor. The first argument
     t2 = BashOperator(
         task_id='sleep',
         bash_command='sleep 5',
+        retries=3,
         dag=dag)
 
 Notice how we pass a mix of operator specific arguments (``bash_command``) and
-an argument common to all operators (``email_on_failure``) inherited
+an argument common to all operators (``retries``) inherited
 from BaseOperator to the operator's constructor. This is simpler than
 passing every argument for every constructor call. Also, notice that in
-the second task we override the ``email_on_failure`` parameter with ``False``.
+the second task we override the ``retries`` parameter with ``3``.
 
 The precedence rules for a task are as follows:
 
@@ -249,8 +251,8 @@ you can define dependencies between them:
     t3.set_upstream(t1)
 
     # all of this is equivalent to
-    # dag.set_dependencies('print_date', 'sleep')
-    # dag.set_dependencies('print_date', 'templated')
+    # dag.set_dependency('print_date', 'sleep')
+    # dag.set_dependency('print_date', 'templated')
 
 Note that when executing your script, Airflow will raise exceptions when
 it finds cycles in your DAG or when a dependency is referenced more
@@ -299,6 +301,7 @@ something like this:
     t2 = BashOperator(
         task_id='sleep',
         bash_command='sleep 5',
+        retries=3,
         dag=dag)
 
     templated_command = """
@@ -424,4 +427,4 @@ Here's a few things you might want to do next:
     * Operators
     * Macros
 
-* Write you first pipeline!
+* Write your first pipeline!
