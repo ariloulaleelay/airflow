@@ -210,7 +210,7 @@ class DagBag(LoggingMixin):
                 self.logger.exception("Failed to import: " + filepath)
                 self.import_errors[filepath] = str(e)
                 self.file_last_changed[filepath] = dttm
-                return
+                return found_dags
 
             for dag in list(m.__dict__.values()):
                 if isinstance(dag, DAG):
