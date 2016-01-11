@@ -5,6 +5,7 @@
 .ipynb*
 .coverage
 .eggs
+.ropeproject/
 airflow/www/static/coverage/
 airflow.db
 airflow.cfg
