@@ -193,8 +193,11 @@ class DagBag(LoggingMixin):
         if safe_mode and os.path.isfile(filepath):
             # Skip file if no obvious references to airflow or DAG are found.
             with open(filepath, 'r') as f:
-                content = f.read()
-                if not all([s in content for s in ('DAG', 'airflow')]):
+                try:
+                    content = unicode(f.read(), errors='replace')
+                except UnicodeDecodeError:
+                    return found_dags
+                if not all([s in content for s in (u'DAG', u'airflow')]):
                     return found_dags
 
         if (not only_if_updated or
@@ -330,7 +333,7 @@ class DagBag(LoggingMixin):
                             self.process_file(
                                 filepath, only_if_updated=only_if_updated)
                     except Exception as e:
-                        logging.warning(e)
+                        logging.warning(traceback.format_exc())
 
     def deactivate_inactive_dags(self):
         active_dag_ids = [dag.dag_id for dag in list(self.dags.values())]
