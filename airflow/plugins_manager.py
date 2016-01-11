@@ -82,7 +82,7 @@ admin_views = list(merge([p.admin_views for p in plugins]))
 flask_blueprints = list(merge([p.flask_blueprints for p in plugins]))
 menu_links = list(merge([p.menu_links for p in plugins]))
 
-for plugin_module_string in conf.airflow.core.plugins():
+for plugin_module_string in configuration.airflow.core.plugins():
     module = importlib.import_module(plugin_module_string)
     for obj_name, obj in module.__dict__.items():
         if inspect.isclass(obj):

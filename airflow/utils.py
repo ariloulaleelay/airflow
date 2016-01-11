@@ -168,7 +168,7 @@ def initpools():
     P = models.Pool
     session = settings.Session()
 
-    for pool_name, pool_info in configuration.conf.airflow.pools.default().items():
+    for pool_name, pool_info in configuration.airflow.pools.default().items():
         pool = session.query(P).filter(P.pool == pool_name).first()
         if not pool:
             session.add(

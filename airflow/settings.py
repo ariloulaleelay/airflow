@@ -21,10 +21,10 @@ ___  ___ |  / _  /   _  __/ _  / / /_/ /_ |/ |/ /
  """
 
 BASE_LOG_URL = '/admin/airflow/log'
-AIRFLOW_HOME = os.path.expanduser(conf.airflow.core.airflow_home.as_string)
-SQL_ALCHEMY_CONN = conf.airflow.core.sql_alchemy_conn.as_string
+AIRFLOW_HOME = os.path.expanduser(configuration.airflow.core.airflow_home.as_string)
+SQL_ALCHEMY_CONN = configuration.airflow.core.sql_alchemy_conn.as_string
 LOGGING_LEVEL = logging.INFO
-DAGS_FOLDER = os.path.expanduser(conf.airflow.core.dags_folder.as_string)
+DAGS_FOLDER = os.path.expanduser(configuration.airflow.core.dags_folder.as_string)
 
 engine_args = {}
 if 'sqlite' not in SQL_ALCHEMY_CONN:

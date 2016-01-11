@@ -78,7 +78,7 @@ airflow {
         plugins_folder = ${airflow.core.airflow_home}"/plugins"
 
         // Secret key to save connection passwords in the db
-        fernet_key = "" 
+        fernet_key = ""
 
         // Whether to disable pickling dags
         donot_pickle = False
@@ -88,6 +88,12 @@ airflow {
         security = None
 
         plugins = []
+
+        dag_concurrency = 16
+
+        max_active_runs_per_dag = 4
+
+        s3_log_folder = ""
     }
 
     pools {
@@ -129,6 +135,10 @@ airflow {
         demo_mode = False
 
         secret_key = airflowified
+
+        workers = 4
+
+        worker_class = sync
     }
 
     smtp {
@@ -331,6 +341,12 @@ class ConfigParserWithDefaults(object):
     def __getattr__(self, key):
         return ConfigEntry(self._config, key)
 
+    # hack to support backward capatibility
+    # TODO remove later
+    @property
+    def conf(self):
+        return self
+
     def get_config(self, key):
         try:
             return self._config.get_config(key)
@@ -365,6 +381,15 @@ class ConfigParserWithDefaults(object):
         except ConfigException, e:
             raise AirflowConfigException(str(e))
 
+    def getfloat(self, key, additional_key=None):
+        if additional_key is not None:
+            # NOTE legacy behaviour
+            key = str('airflow.' + key + '.' + additional_key).lower()
+        try:
+            return self._config.get_float(key)
+        except ConfigException, e:
+            raise AirflowConfigException(str(e))
+
 
 def mkdir_p(path):
     try:
@@ -395,7 +420,7 @@ if 'AIRFLOW_CONFIG' not in os.environ:
 else:
     AIRFLOW_CONFIG = expand_env_var(os.environ['AIRFLOW_CONFIG'])
 
-os.environ['AIRFLOW_HOME'] = AIRFLOW_HOME 
+os.environ['AIRFLOW_HOME'] = AIRFLOW_HOME
 os.environ['AIRFLOW_CONFIG'] = AIRFLOW_CONFIG
 
 if not os.path.isfile(AIRFLOW_CONFIG):

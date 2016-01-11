@@ -11,7 +11,7 @@ import logging
 import os
 import sys
 
-import airflow.configuration
+from .configuration import conf as configuration
 
 from airflow.models import DAG
 from flask.ext.admin import BaseView
